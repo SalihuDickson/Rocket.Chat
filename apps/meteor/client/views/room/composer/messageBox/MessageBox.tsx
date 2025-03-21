@@ -1,11 +1,11 @@
 /* eslint-disable complexity */
 import type { IMessage, ISubscription } from '@rocket.chat/core-typings';
 import { useContentBoxSize, useEffectEvent } from '@rocket.chat/fuselage-hooks';
+import RTEditor from '../RTEditor/RTEditor';
 import {
 	MessageComposerAction,
 	MessageComposerToolbarActions,
 	MessageComposer,
-	MessageComposerInput,
 	MessageComposerToolbar,
 	MessageComposerActionsDivider,
 	MessageComposerToolbarSubmit,
@@ -13,8 +13,8 @@ import {
 } from '@rocket.chat/ui-composer';
 import { useTranslation, useUserPreference, useLayout, useSetting } from '@rocket.chat/ui-contexts';
 import { useMutation } from '@tanstack/react-query';
-import type { ReactElement, FormEvent, MouseEvent, ClipboardEvent } from 'react';
-import { memo, useRef, useReducer, useCallback, useSyncExternalStore } from 'react';
+import type { ReactElement, MouseEvent, ClipboardEvent } from 'react';
+import { memo, useRef, useReducer, useCallback, useSyncExternalStore, useState } from 'react';
 
 import MessageBoxActionsToolbar from './MessageBoxActionsToolbar';
 import MessageBoxFormattingToolbar from './MessageBoxFormattingToolbar';
@@ -42,12 +42,12 @@ import { useComposerBoxPopup } from '../hooks/useComposerBoxPopup';
 import { useEnablePopupPreview } from '../hooks/useEnablePopupPreview';
 import { useMessageComposerMergedRefs } from '../hooks/useMessageComposerMergedRefs';
 import { useMessageBoxAutoFocus } from './hooks/useMessageBoxAutoFocus';
-import { useMessageBoxPlaceholder } from './hooks/useMessageBoxPlaceholder';
+import { $getRoot, LexicalEditor } from 'lexical';
+import { INSERT_EMOJI_IMAGE_COMMAND } from '../RTEditor/commands';
 
-const reducer = (_: unknown, event: FormEvent<HTMLInputElement>): boolean => {
-	const target = event.target as HTMLInputElement;
-
-	return Boolean(target.value.trim());
+const reducer = (_: any, content: string): boolean => {
+	const isEmpty = content.trim().length === 0;
+	return !isEmpty;
 };
 
 const handleFormattingShortcut = (event: KeyboardEvent, formattingButtons: FormattingButton[], composer: ComposerAPI) => {
@@ -107,12 +107,13 @@ const MessageBox = ({
 	const chat = useChat();
 	const room = useRoom();
 	const t = useTranslation();
+	const [editor, setEditor] = useState<LexicalEditor | null>(null);
 	const e2eEnabled = useSetting('E2E_Enable', false);
 	const unencryptedMessagesAllowed = useSetting('E2E_Allow_Unencrypted_Messages', false);
 	const isSlashCommandAllowed = !e2eEnabled || !room.encrypted || unencryptedMessagesAllowed;
-	const composerPlaceholder = useMessageBoxPlaceholder(t('Message'), room);
 
 	const [typing, setTyping] = useReducer(reducer, false);
+	const [editorContent, setEditorContent] = useState('');
 
 	const { isMobile } = useLayout();
 	const sendOnEnterBehavior = useUserPreference<'normal' | 'alternative' | 'desktop'>('sendOnEnter') || isMobile;
@@ -155,20 +156,31 @@ const MessageBox = ({
 		}
 
 		const ref = messageComposerRef.current as HTMLElement;
-		chat.emojiPicker.open(ref, (emoji: string) => chat.composer?.insertText(` :${emoji}: `));
+		chat.emojiPicker.open(ref, (emoji: string) => {
+			if (!editor) return;
+			editor.dispatchCommand(INSERT_EMOJI_IMAGE_COMMAND, emoji);
+		});
 	});
 
 	const handleSendMessage = useEffectEvent(() => {
-		const text = chat.composer?.text ?? '';
-		chat.composer?.clear();
-		popup.clear();
+		const sendMessage = async () => {
+			chat.composer?.clear();
+			popup.clear();
 
-		onSend?.({
-			value: text,
-			tshow,
-			previewUrls,
-			isSlashCommandAllowed,
-		});
+			await onSend?.({
+				value: editorContent,
+				tshow,
+				previewUrls,
+				isSlashCommandAllowed,
+			});
+
+			editor?.update(() => {
+				const root = $getRoot();
+				root.clear();
+			});
+		};
+
+		sendMessage();
 	});
 
 	const closeEditing = (event: KeyboardEvent | MouseEvent<HTMLElement>) => {
@@ -384,18 +396,20 @@ const MessageBox = ({
 				isMobile={isMobile}
 			/>
 			{isRecordingVideo && <VideoMessageRecorder reference={messageComposerRef} rid={room._id} tmid={tmid} />}
+
 			<MessageComposer ref={messageComposerRef} variant={isEditing ? 'editing' : undefined}>
 				{isRecordingAudio && <AudioMessageRecorder rid={room._id} isMicrophoneDenied={isMicrophoneDenied} />}
-				<MessageComposerInput
+				<RTEditor
+					messageRef={messageComposerRef}
+					setEditor={setEditor}
 					ref={mergedRefs}
-					aria-label={composerPlaceholder}
-					name='msg'
 					disabled={isRecording || !canSend}
-					onChange={setTyping}
+					onChange={(content: string) => {
+						setEditorContent(content);
+						setTyping(content);
+					}}
 					style={textAreaStyle}
-					placeholder={composerPlaceholder}
 					onPaste={handlePaste}
-					aria-activedescendant={popup.focused ? `popup-item-${popup.focused._id}` : undefined}
 				/>
 				<div ref={shadowRef} style={shadowStyle} />
 				<MessageComposerToolbar>
