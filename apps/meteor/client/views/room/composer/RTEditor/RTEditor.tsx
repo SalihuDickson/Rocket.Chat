@@ -1,4 +1,3 @@
-import './style.css';
 import type { CSSProperties } from 'react';
 import { forwardRef, useEffect, RefObject } from 'react';
 
