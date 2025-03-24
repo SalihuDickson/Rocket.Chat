@@ -13,6 +13,8 @@ import { useTranslation, usePermission, useRoute } from '@rocket.chat/ui-context
 import type { ChangeEvent, KeyboardEvent, MouseEvent, RefObject, UIEvent } from 'react';
 import { useLayoutEffect, useState, useEffect, useRef } from 'react';
 import type { VirtuosoHandle } from 'react-virtuoso';
+import data, { Emoji, Skin } from '@emoji-mart/data';
+import Picker from '@emoji-mart/react';
 
 import CategoriesResult from './CategoriesResult';
 import EmojiPickerCategoryItem from './EmojiPickerCategoryItem';
@@ -28,7 +30,7 @@ import { useIsVisible } from '../../room/hooks/useIsVisible';
 type EmojiPickerProps = {
 	reference: Element;
 	onClose: () => void;
-	onPickEmoji: (emoji: string) => void;
+	onPickEmoji: (emoji: Emoji & Skin) => void;
 };
 
 const EmojiPicker = ({ reference, onClose, onPickEmoji }: EmojiPickerProps) => {
@@ -102,29 +104,12 @@ const EmojiPicker = ({ reference, onClose, onPickEmoji }: EmojiPickerProps) => {
 		}
 	}, [isInputVisible]);
 
-	const handleSelectEmoji = (event: MouseEvent<HTMLElement>) => {
-		event.stopPropagation();
-
-		const _emoji = event.currentTarget.dataset?.emoji;
-
-		if (!_emoji) {
+	const handleSelectEmoji = (emoji: Emoji & Skin) => {
+		if (!emoji) {
 			return;
 		}
 
-		let tone = '';
-
-		for (const emojiPackage in emoji.packages) {
-			if (emoji.packages.hasOwnProperty(emojiPackage)) {
-				if (actualTone > 0 && emoji.packages[emojiPackage].toneList.hasOwnProperty(_emoji)) {
-					tone = `_tone${actualTone}`;
-				}
-			}
-		}
-
-		setSearchTerm('');
-
-		onPickEmoji(_emoji + tone);
-		addRecentEmoji(_emoji + tone);
+		onPickEmoji(emoji);
 		onClose();
 	};
 
@@ -182,7 +167,7 @@ const EmojiPicker = ({ reference, onClose, onPickEmoji }: EmojiPickerProps) => {
 
 	return (
 		<EmojiPickerDropdown reference={ref as RefObject<HTMLElement>} ref={emojiContainerRef}>
-			<EmojiPickerContainer role='dialog' aria-label={t('Emoji_picker')} onKeyDown={handleKeyDown}>
+			{/* <EmojiPickerContainer role='dialog' aria-label={t('Emoji_picker')} onKeyDown={handleKeyDown}>
 				<EmojiPickerHeader>
 					<TextInput
 						// FIXME: remove autoFocus prop when rewriting the emojiPicker dropdown
@@ -234,7 +219,9 @@ const EmojiPicker = ({ reference, onClose, onPickEmoji }: EmojiPickerProps) => {
 					</ToneSelectorWrapper>
 				</EmojiPickerPreviewArea>
 				<EmojiPickerFooter>{t('Powered_by_JoyPixels')}</EmojiPickerFooter>
-			</EmojiPickerContainer>
+			</EmojiPickerContainer> */}
+
+			<Picker data={data} onEmojiSelect={handleSelectEmoji} autoFocus={true} />
 		</EmojiPickerDropdown>
 	);
 };

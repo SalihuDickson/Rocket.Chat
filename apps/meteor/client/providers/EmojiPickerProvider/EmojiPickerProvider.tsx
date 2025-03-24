@@ -7,6 +7,7 @@ import type { EmojiByCategory } from '../../../app/emoji/client';
 import { emoji, getFrequentEmoji, updateRecent, createEmojiList, createPickerEmojis, CUSTOM_CATEGORY } from '../../../app/emoji/client';
 import { EmojiPickerContext } from '../../contexts/EmojiPickerContext';
 import EmojiPicker from '../../views/composer/EmojiPicker/EmojiPicker';
+import { Emoji, Skin } from '@emoji-mart/data';
 
 const DEFAULT_ITEMS_LIMIT = 90;
 
@@ -98,8 +99,8 @@ const EmojiPickerProvider = ({ children }: { children: ReactNode }): ReactElemen
 		[recentEmojis, setRecentEmojis, updateEmojiListByCategory, addFrequentEmojis],
 	);
 
-	const open = useCallback((ref: Element, callback: (emoji: string) => void) => {
-		return setEmojiPicker(<EmojiPicker reference={ref} onClose={() => setEmojiPicker(null)} onPickEmoji={(emoji) => callback(emoji)} />);
+	const open = useCallback((ref: Element, callback: (emoji: Emoji & Skin) => void) => {
+		return setEmojiPicker(<EmojiPicker reference={ref} onClose={() => setEmojiPicker(null)} onPickEmoji={callback} />);
 	}, []);
 
 	const handlePreview = useCallback((emoji: string, name: string) => setEmojiToPreview({ emoji, name }), [setEmojiToPreview]);

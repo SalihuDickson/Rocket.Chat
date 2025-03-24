@@ -2,6 +2,7 @@ import type { MutableRefObject } from 'react';
 import { createContext, useContext } from 'react';
 
 import type { EmojiByCategory } from '../../app/emoji/client';
+import { Emoji, Skin } from '@emoji-mart/data';
 
 type EmojiCategoryPosition = {
 	key: string;
@@ -9,7 +10,7 @@ type EmojiCategoryPosition = {
 };
 
 type EmojiPickerContextValue = {
-	open: (ref: Element, callback: (emoji: string) => void) => void;
+	open: (ref: Element, callback: (emoji: Emoji & Skin) => void) => void;
 	isOpen: boolean;
 	close: () => void;
 	emojiToPreview: { emoji: string; name: string } | null;

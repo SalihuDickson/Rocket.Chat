@@ -14,7 +14,9 @@ import { useEffect, RefObject, useCallback } from 'react';
 import { CustomTypeaheadMatch, customTypeAheadTriggerMatch } from '../utils';
 import { useChat } from '../../../../contexts/ChatContext';
 import emojiJson from 'emojione-assets/emoji.json';
-import { INSERT_EMOJI_IMAGE_COMMAND } from '../../commands';
+import { INSERT_EMOJI_COMMAND } from '../../commands';
+import { Emoji, Skin } from '@emoji-mart/data';
+import { $createEmojiNode } from '../../nodes/EmojiNode';
 
 const PUNCTUATION = '\\.,\\+\\*\\?\\$\\@\\|#{}\\(\\)\\^\\-\\[\\]\\\\/!%\'"~=<>:;';
 
@@ -59,34 +61,30 @@ export default function EmojiPickerPlugin({ messageRef }: { messageRef: RefObjec
 	const [editor] = useLexicalComposerContext();
 	const chat = useChat();
 
-	const replaceEmojiStrWithImage = useCallback(
+	const replaceEmojiStrWithEmoji = useCallback(
 		(emoji: string, { nodeToReplace, startIndex, endIndex }: CustomTypeaheadMatch) => {
-			const matchingEmoji = findEmojiCode(emoji);
-			console.log('match', matchingEmoji);
-			const src = `/emojione-assets/png/32/${matchingEmoji}.png`;
-
 			editor.update(() => {
-				const imageNode = $createImageNode({ src, altText: emoji });
+				const emojiNode = $createEmojiNode('', emoji);
 
 				if (!nodeToReplace) {
-					$insertNodes([imageNode]);
+					$insertNodes([emojiNode]);
 					return;
 				}
 
 				if (startIndex > -1) {
-					const [beforeNode, emojiNode, afterNode] = nodeToReplace.splitText(startIndex, endIndex);
+					const [beforeNode, midNode, afterNode] = nodeToReplace.splitText(startIndex, endIndex);
 
-					if (emojiNode) emojiNode.replace(imageNode);
-					else if (beforeNode) beforeNode.replace(imageNode);
+					if (midNode) midNode.replace(emojiNode);
+					else if (beforeNode) beforeNode.replace(emojiNode);
 
 					// Set selection after the image
 					if (afterNode) {
 						afterNode.select(0, 0);
 					} else {
-						imageNode.selectNext();
+						emojiNode.selectNext();
 					}
 				} else {
-					$insertNodes([imageNode]);
+					$insertNodes([emojiNode]);
 					nodeToReplace.remove();
 				}
 			});
@@ -109,7 +107,7 @@ export default function EmojiPickerPlugin({ messageRef }: { messageRef: RefObjec
 
 			if (!match) return;
 			chat?.emojiPicker.open(messageRef!.current as Element, (emoji) => {
-				replaceEmojiStrWithImage(emoji, match);
+				replaceEmojiStrWithEmoji(emoji.native, match);
 				chat?.emojiPicker?.close();
 			});
 		});
@@ -120,15 +118,12 @@ export default function EmojiPickerPlugin({ messageRef }: { messageRef: RefObjec
 	}, []);
 
 	useEffect(() => {
-		const removeListener = editor.registerCommand<string>(
-			INSERT_EMOJI_IMAGE_COMMAND,
-			(emoji: string) => {
-				const emojiCode = findEmojiCode(emoji);
-				const src = `/emojione-assets/png/32/${emojiCode}.png`;
-
+		const removeListener = editor.registerCommand<Emoji & Skin>(
+			INSERT_EMOJI_COMMAND,
+			(emoji: Emoji & Skin) => {
 				editor.update(() => {
-					const imageNode = $createImageNode({ src, altText: emoji || 'emoji' });
-					$insertNodes([imageNode]);
+					const emojiNode = $createEmojiNode('', emoji.native);
+					$insertNodes([emojiNode]);
 				});
 
 				return true;

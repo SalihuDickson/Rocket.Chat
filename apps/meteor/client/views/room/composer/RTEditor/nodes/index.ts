@@ -11,6 +11,7 @@ import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 
 import { ImageNode } from './ImageNode';
+import { EmojiNode } from './EmojiNode';
 
 const nodes: Array<Klass<LexicalNode>> = [
 	HorizontalRuleNode,
@@ -29,6 +30,7 @@ const nodes: Array<Klass<LexicalNode>> = [
 	HeadingNode,
 	QuoteNode,
 	ImageNode,
+	EmojiNode,
 ];
 
 export default nodes;

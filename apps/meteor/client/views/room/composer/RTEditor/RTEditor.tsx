@@ -56,11 +56,9 @@ const Editor = forwardRef<HTMLElement, Props>(({ disabled, onChange, style, onPa
 
 	useEffect(() => {
 		setEditor(editor);
-		const removeUpdateListener = editor.registerUpdateListener(({ editorState }) => {
-			editorState.read(() => {
-				const textContent = $convertToMarkdownString(TRANSFORMERS);
-				onChange?.(textContent);
-			});
+		const removeUpdateListener = editor.registerTextContentListener((text) => {
+			console.log('text', text);
+			onChange?.(text);
 		});
 
 		return () => {

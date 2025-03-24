@@ -43,7 +43,8 @@ import { useEnablePopupPreview } from '../hooks/useEnablePopupPreview';
 import { useMessageComposerMergedRefs } from '../hooks/useMessageComposerMergedRefs';
 import { useMessageBoxAutoFocus } from './hooks/useMessageBoxAutoFocus';
 import { $getRoot, LexicalEditor } from 'lexical';
-import { INSERT_EMOJI_IMAGE_COMMAND } from '../RTEditor/commands';
+import { INSERT_EMOJI_COMMAND } from '../RTEditor/commands';
+import { Emoji, Skin } from '@emoji-mart/data';
 
 const reducer = (_: any, content: string): boolean => {
 	const isEmpty = content.trim().length === 0;
@@ -156,9 +157,9 @@ const MessageBox = ({
 		}
 
 		const ref = messageComposerRef.current as HTMLElement;
-		chat.emojiPicker.open(ref, (emoji: string) => {
+		chat.emojiPicker.open(ref, (emoji: Emoji & Skin) => {
 			if (!editor) return;
-			editor.dispatchCommand(INSERT_EMOJI_IMAGE_COMMAND, emoji);
+			editor.dispatchCommand(INSERT_EMOJI_COMMAND, emoji);
 		});
 	});
 
