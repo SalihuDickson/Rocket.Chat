@@ -14,7 +14,9 @@ import { useEffect, RefObject, useCallback } from 'react';
 import { CustomTypeaheadMatch, customTypeAheadTriggerMatch } from '../utils';
 import { useChat } from '../../../../contexts/ChatContext';
 import emojiJson from 'emojione-assets/emoji.json';
+import { emoji as emojiPackage } from '/app/emoji/client';
 import { INSERT_EMOJI_IMAGE_COMMAND } from '../../commands';
+import { getEmojiUrlFromName } from '/app/emoji-custom/client/lib/emojiCustom';
 
 const PUNCTUATION = '\\.,\\+\\*\\?\\$\\@\\|#{}\\(\\)\\^\\-\\[\\]\\\\/!%\'"~=<>:;';
 
@@ -61,12 +63,20 @@ export default function EmojiPickerPlugin({ messageRef }: { messageRef: RefObjec
 
 	const replaceEmojiStrWithImage = useCallback(
 		(emoji: string, { nodeToReplace, startIndex, endIndex }: CustomTypeaheadMatch) => {
-			const matchingEmoji = findEmojiCode(emoji);
-			console.log('match', matchingEmoji);
-			const src = `/emojione-assets/png/32/${matchingEmoji}.png`;
+			const emojiCode = findEmojiCode(emoji);
+			const shortcode = ':' + emoji + ':';
+			const packageName = emojiPackage.list[shortcode].emojiPackage;
+			let src = '';
+
+			if (packageName === 'emojione') {
+				src = `/emojione-assets/png/32/${emojiCode}.png`;
+			} else if (packageName === 'emojiCustom') {
+				const dataCheck = emojiPackage.list[shortcode];
+				src = getEmojiUrlFromName(shortcode.replace(/:/g, ''), dataCheck.extension!, dataCheck.etag) || '';
+			}
 
 			editor.update(() => {
-				const imageNode = $createImageNode({ src, altText: emoji });
+				const imageNode = $createImageNode({ src, altText: emoji, dataEmoji: 'emojiCode' });
 
 				if (!nodeToReplace) {
 					$insertNodes([imageNode]);
@@ -124,10 +134,19 @@ export default function EmojiPickerPlugin({ messageRef }: { messageRef: RefObjec
 			INSERT_EMOJI_IMAGE_COMMAND,
 			(emoji: string) => {
 				const emojiCode = findEmojiCode(emoji);
-				const src = `/emojione-assets/png/32/${emojiCode}.png`;
+				const shortcode = ':' + emoji + ':';
+				const packageName = emojiPackage.list[shortcode].emojiPackage;
+				let src = '';
+
+				if (packageName === 'emojione') {
+					src = `/emojione-assets/png/32/${emojiCode}.png`;
+				} else if (packageName === 'emojiCustom') {
+					const dataCheck = emojiPackage.list[shortcode];
+					src = getEmojiUrlFromName(shortcode.replace(/:/g, ''), dataCheck.extension!, dataCheck.etag) || '';
+				}
 
 				editor.update(() => {
-					const imageNode = $createImageNode({ src, altText: emoji || 'emoji' });
+					const imageNode = $createImageNode({ src, altText: emoji || 'emoji', dataEmoji: shortcode });
 					$insertNodes([imageNode]);
 				});
 

@@ -7,14 +7,16 @@ export const $createImageNode = ({
 	maxWidth = 400,
 	height,
 	width,
+	dataEmoji,
 }: {
 	src: string;
 	altText: string;
 	maxWidth?: number;
 	height?: number;
 	width?: number;
+	dataEmoji?: string;
 }) => {
-	return new ImageNode({ src, altText, maxWidth, height, width });
+	return new ImageNode({ src, altText, maxWidth, height, width, dataEmoji });
 };
 
 const convertImageElement = (domNode: Node): DOMConversionOutput | null => {
@@ -37,6 +39,7 @@ class ImageNode extends DecoratorNode<JSX.Element> {
 	private height?: 'inherit' | number = 'inherit';
 	private width?: 'inherit' | number = 'inherit';
 	private maxWidth?: 'inherit' | number = 'inherit';
+	private dataEmoji?: string;
 
 	static getType(): string {
 		return 'image';
@@ -50,6 +53,7 @@ class ImageNode extends DecoratorNode<JSX.Element> {
 			maxWidth: _node.maxWidth,
 			src: _node.src,
 			width: _node.width,
+			dataEmoji: _node.dataEmoji,
 		});
 	}
 
@@ -69,6 +73,10 @@ class ImageNode extends DecoratorNode<JSX.Element> {
 		return this.altText;
 	}
 
+	getDataEmoji(): string {
+		return this.dataEmoji || '';
+	}
+
 	constructor({
 		src,
 		altText,
@@ -76,6 +84,7 @@ class ImageNode extends DecoratorNode<JSX.Element> {
 		height = 14,
 		width = 14,
 		key,
+		dataEmoji,
 	}: {
 		src: string;
 		altText: string;
@@ -83,6 +92,7 @@ class ImageNode extends DecoratorNode<JSX.Element> {
 		height?: 'inherit' | number;
 		width?: 'inherit' | number;
 		key?: NodeKey;
+		dataEmoji?: string;
 	}) {
 		super(key);
 
@@ -91,6 +101,7 @@ class ImageNode extends DecoratorNode<JSX.Element> {
 		this.height = height;
 		this.width = width;
 		this.maxWidth = maxWidth;
+		this.dataEmoji = dataEmoji;
 	}
 
 	decorate(): JSX.Element {
@@ -99,6 +110,7 @@ class ImageNode extends DecoratorNode<JSX.Element> {
 			altText: this.altText,
 			width: this.width,
 			height: this.height,
+			dataEmoji: this.dataEmoji,
 		});
 	}
 
@@ -115,6 +127,7 @@ class ImageNode extends DecoratorNode<JSX.Element> {
 		const el = document.createElement('img');
 		el.setAttribute('src', this.src);
 		el.setAttribute('alt', this.altText);
+		el.setAttribute('data-emoji', this.dataEmoji || '');
 		el.style.width = this.width ? this.width.toString() : 'inherit';
 		el.style.height = this.height ? this.height.toString() : 'inherit';
 		el.style.maxWidth = this.maxWidth ? this.maxWidth.toString() : 'inherit';

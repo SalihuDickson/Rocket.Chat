@@ -158,6 +158,7 @@ const MessageBox = ({
 		const ref = messageComposerRef.current as HTMLElement;
 		chat.emojiPicker.open(ref, (emoji: string) => {
 			if (!editor) return;
+
 			editor.dispatchCommand(INSERT_EMOJI_IMAGE_COMMAND, emoji);
 		});
 	});

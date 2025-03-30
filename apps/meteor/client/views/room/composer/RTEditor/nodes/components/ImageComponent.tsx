@@ -4,13 +4,15 @@ type ImageComponentProps = {
 	width?: number | 'inherit';
 	height?: number | 'inherit';
 	maxWidth?: number | 'inherit';
+	dataEmoji?: string;
 };
 
-const ImageComponent = ({ src, altText, width, height, maxWidth }: ImageComponentProps) => {
+const ImageComponent = ({ src, altText, width, height, maxWidth, dataEmoji }: ImageComponentProps) => {
 	return (
 		<img
 			src={src}
 			alt={altText}
+			data-emoji={dataEmoji}
 			style={{
 				width: width,
 				height: height,

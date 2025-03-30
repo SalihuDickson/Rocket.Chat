@@ -17,7 +17,7 @@ const isSetNotNull = (fn: () => unknown) => {
 	return value !== null && value !== undefined;
 };
 
-const getEmojiUrlFromName = (name: string, extension: string, etag?: string) => {
+export const getEmojiUrlFromName = (name: string, extension: string, etag?: string) => {
 	if (!name) {
 		return;
 	}
