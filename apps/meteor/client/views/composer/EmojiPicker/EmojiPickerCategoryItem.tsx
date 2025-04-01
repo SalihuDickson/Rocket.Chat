@@ -1,11 +1,10 @@
 import { IconButton } from '@rocket.chat/fuselage';
+import { TranslationKey } from '@rocket.chat/ui-contexts';
 import type { AllHTMLAttributes } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import type { EmojiCategory } from '../../../../app/emoji/client';
-
 type EmojiPickerCategoryItemProps = {
-	category: EmojiCategory;
+	category: { id: string; i18n: TranslationKey };
 	index: number;
 	active: boolean;
 	handleGoToCategory: (categoryIndex: number) => void;
@@ -19,7 +18,7 @@ const mapCategoryIcon = (category: string) => {
 		case 'nature':
 			return 'leaf';
 
-		case 'food':
+		case 'foods':
 			return 'burger';
 
 		case 'activity':
@@ -48,14 +47,14 @@ const mapCategoryIcon = (category: string) => {
 const EmojiPickerCategoryItem = ({ category, index, active, handleGoToCategory, ...props }: EmojiPickerCategoryItemProps) => {
 	const { t } = useTranslation();
 
-	const icon = mapCategoryIcon(category.key);
+	const icon = mapCategoryIcon(category.id);
 
 	return (
 		<IconButton
 			role='tab'
 			pressed={active}
 			title={t(category.i18n)}
-			className={category.key}
+			className={category.id}
 			small
 			aria-label={t(category.i18n)}
 			onClick={() => handleGoToCategory(index)}

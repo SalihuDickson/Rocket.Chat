@@ -6,11 +6,11 @@ import type { VirtuosoHandle } from 'react-virtuoso';
 import { Virtuoso } from 'react-virtuoso';
 
 import EmojiCategoryRow from './EmojiCategoryRow';
-import type { EmojiByCategory } from '../../../../app/emoji/client';
+import type { RocketChatEmojiCategory } from '../../../../app/emoji/client';
 import { VirtuosoScrollbars } from '../../../components/CustomScrollbars';
 
 type CategoriesResultProps = {
-	emojiListByCategory: EmojiByCategory[];
+	emojiListByCategory: RocketChatEmojiCategory[];
 	customItemsLimit: number;
 	handleLoadMore: () => void;
 	handleSelectEmoji: (event: MouseEvent<HTMLElement>) => void;
@@ -50,9 +50,9 @@ const CategoriesResult = forwardRef<VirtuosoHandle, CategoriesResultProps>(funct
 						wrapper.current.classList.remove('pointer-none');
 					}
 				}}
-				itemContent={(_, { key, ...data }) => (
+				itemContent={(_, { id, ...data }) => (
 					<EmojiCategoryRow
-						categoryKey={key}
+						categoryKey={id}
 						customItemsLimit={customItemsLimit}
 						handleLoadMore={handleLoadMore}
 						handleSelectEmoji={handleSelectEmoji}

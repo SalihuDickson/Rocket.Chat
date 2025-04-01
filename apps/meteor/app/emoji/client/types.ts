@@ -13,6 +13,7 @@ export type EmojiCategory = {
 export type EmojiByCategory = {
 	key: string;
 	i18n: TranslationKey;
+
 	emojis: {
 		list: EmojiItem[];
 		limit: number | null;

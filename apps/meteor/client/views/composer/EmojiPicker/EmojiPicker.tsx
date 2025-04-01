@@ -20,7 +20,7 @@ import EmojiPickerDropdown from './EmojiPickerDropDown';
 import SearchingResult from './SearchingResult';
 import ToneSelector from './ToneSelector';
 import ToneSelectorWrapper from './ToneSelector/ToneSelectorWrapper';
-import { emoji, getCategoriesList, getEmojisBySearchTerm } from '../../../../app/emoji/client';
+import { emoji, getCategories, getEmojis, getCategoriesList, getEmojisBySearchTerm } from '../../../../app/emoji/client';
 import type { EmojiItem } from '../../../../app/emoji/client';
 import { usePreviewEmoji, useEmojiPickerData } from '../../../contexts/EmojiPickerContext';
 import { useIsVisible } from '../../room/hooks/useIsVisible';
@@ -30,6 +30,9 @@ type EmojiPickerProps = {
 	onClose: () => void;
 	onPickEmoji: (emoji: string) => void;
 };
+
+const emojiCategories = getCategories();
+const emojis = getEmojis();
 
 const EmojiPicker = ({ reference, onClose, onPickEmoji }: EmojiPickerProps) => {
 	const t = useTranslation();
@@ -42,8 +45,6 @@ const EmojiPicker = ({ reference, onClose, onPickEmoji }: EmojiPickerProps) => {
 	const textInputRef = useRef<HTMLInputElement>();
 
 	const mergedTextInputRef = useMergedRefs(isVisibleRef, textInputRef);
-
-	const emojiCategories = getCategoriesList();
 
 	const canManageEmoji = usePermission('manage-emoji');
 	const customEmojiRoute = useRoute('emoji-custom');
@@ -68,6 +69,13 @@ const EmojiPicker = ({ reference, onClose, onPickEmoji }: EmojiPickerProps) => {
 	} = useEmojiPickerData();
 
 	useEffect(() => () => handleRemovePreview(), [handleRemovePreview]);
+
+	useEffect(() => {
+		console.log('list', emojiCategories);
+		console.log('emojis', emojis);
+
+		console.log('emoji by cat', getEmojiListsByCategory());
+	}, []);
 
 	const scrollCategories = useMediaQuery('(width < 340px)');
 
@@ -180,6 +188,8 @@ const EmojiPicker = ({ reference, onClose, onPickEmoji }: EmojiPickerProps) => {
 		onClose();
 	};
 
+	// return <></>;
+
 	return (
 		<EmojiPickerDropdown reference={ref as RefObject<HTMLElement>} ref={emojiContainerRef}>
 			<EmojiPickerContainer role='dialog' aria-label={t('Emoji_picker')} onKeyDown={handleKeyDown}>
@@ -196,12 +206,12 @@ const EmojiPicker = ({ reference, onClose, onPickEmoji }: EmojiPickerProps) => {
 					/>
 				</EmojiPickerHeader>
 				<EmojiPickerCategoryHeader role='tablist' {...(scrollCategories && { style: { overflowX: 'scroll' } })}>
-					{emojiCategories.map((category, index) => (
+					{emojiCategories.map(({ id, i18n }, index) => (
 						<EmojiPickerCategoryItem
-							key={category.key}
+							key={id}
 							index={index}
-							category={category}
-							active={category.key === currentCategory}
+							category={{ id, i18n }}
+							active={id === currentCategory}
 							handleGoToCategory={handleGoToCategory}
 						/>
 					))}
@@ -212,7 +222,7 @@ const EmojiPicker = ({ reference, onClose, onPickEmoji }: EmojiPickerProps) => {
 					{!searching && (
 						<CategoriesResult
 							ref={virtuosoRef}
-							emojiListByCategory={getEmojiListsByCategory()}
+							emojiListByCategory={emojis}
 							customItemsLimit={customItemsLimit}
 							handleLoadMore={handleLoadMore}
 							handleSelectEmoji={handleSelectEmoji}

@@ -218,6 +218,7 @@
 		"@babel/runtime": "~7.26.0",
 		"@bugsnag/js": "~7.20.2",
 		"@bugsnag/plugin-react": "~7.19.0",
+		"@emoji-mart/data": "^1.2.1",
 		"@google-cloud/storage": "^7.15.0",
 		"@kaciras/deasync": "^1.1.0",
 		"@lexical/react": "^0.27.1",

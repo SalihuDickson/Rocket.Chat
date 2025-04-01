@@ -2720,6 +2720,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@emoji-mart/data@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "@emoji-mart/data@npm:1.2.1"
+  checksum: 10/a9f50edaf354aadfede604fb26d80055a085e9160db2c924fd5e6afc27033cd5beb0006a9ee48240ce9c543e58e1bf1cf9ed83baba5db83a395154984b30bd91
+  languageName: node
+  linkType: hard
+
 "@emotion/hash@npm:^0.9.0":
   version: 0.9.0
   resolution: "@emotion/hash@npm:0.9.0"
@@ -8978,6 +8985,7 @@ __metadata:
     "@babel/runtime": "npm:~7.26.0"
     "@bugsnag/js": "npm:~7.20.2"
     "@bugsnag/plugin-react": "npm:~7.19.0"
+    "@emoji-mart/data": "npm:^1.2.1"
     "@faker-js/faker": "npm:~8.0.2"
     "@google-cloud/storage": "npm:^7.15.0"
     "@kaciras/deasync": "npm:^1.1.0"
