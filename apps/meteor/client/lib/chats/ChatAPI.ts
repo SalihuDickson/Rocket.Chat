@@ -5,6 +5,7 @@ import type { Upload } from './Upload';
 import type { ReadStateManager } from './readStateManager';
 import type { FormattingButton } from '../../../app/ui-message/client/messageBox/messageBoxFormatting';
 import type { Subscribable } from '../../definitions/Subscribable';
+import { Emoji, Skin } from '@emoji-mart/data';
 
 export type ComposerAPI = {
 	release(): void;
@@ -131,7 +132,7 @@ export type ChatAPI = {
 		| undefined;
 
 	readonly emojiPicker: {
-		open(el: Element, cb: (emoji: string) => void): void;
+		open(el: Element, cb: (emoji: Emoji & Skin) => void): void;
 		close(): void;
 	};
 

@@ -1,0 +1,9 @@
+import { TEXT_FORMAT_TRANSFORMERS, ELEMENT_TRANSFORMERS, TEXT_MATCH_TRANSFORMERS, Transformer } from '@lexical/markdown';
+import { IMAGE_EMOJI_TRANSFORMER } from './ImageEmojiTransformer';
+
+export const TRANSFORMERS: Array<Transformer> = [
+	...TEXT_FORMAT_TRANSFORMERS,
+	...TEXT_MATCH_TRANSFORMERS,
+	...ELEMENT_TRANSFORMERS,
+	IMAGE_EMOJI_TRANSFORMER,
+];
