@@ -83,7 +83,6 @@ const Editor = forwardRef<HTMLElement, Props>(({ disabled, onChange, style, onPa
 						aria-label={composerPlaceholder}
 						name='msg'
 						disabled={disabled}
-						style={style}
 						placeholder={composerPlaceholder}
 						onPaste={onPaste}
 						aria-activedescendant={popup.focused ? `popup-item-${popup.focused._id}` : undefined}

@@ -288,7 +288,7 @@ const MessageBox = ({
 
 	const isRecording = isRecordingAudio || isRecordingVideo;
 
-	const { textAreaStyle, shadowStyle } = useAutoGrow(textareaRef, shadowRef, isRecordingAudio);
+	const { shadowStyle } = useAutoGrow(textareaRef, shadowRef, isRecordingAudio);
 
 	const canSend = useReactiveValue(useCallback(() => roomCoordinator.verifyCanSendMessage(room._id), [room._id]));
 
@@ -302,7 +302,6 @@ const MessageBox = ({
 
 	const handlePaste = useEffectEvent((event: ClipboardEvent<HTMLTextAreaElement>) => {
 		const { clipboardData } = event;
-
 		if (!clipboardData) {
 			return;
 		}
@@ -409,7 +408,6 @@ const MessageBox = ({
 						setEditorContent(content);
 						setTyping(content);
 					}}
-					style={textAreaStyle}
 					onPaste={handlePaste}
 				/>
 				<div ref={shadowRef} style={shadowStyle} />
