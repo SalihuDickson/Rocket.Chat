@@ -88,3 +88,4 @@ dist
 matrix-federation-config/*
 .eslintcache
 tsconfig.typecheck.tsbuildinfo
+public/emojione-assets
