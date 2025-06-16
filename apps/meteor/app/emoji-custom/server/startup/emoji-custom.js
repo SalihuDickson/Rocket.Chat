@@ -12,7 +12,7 @@ Meteor.startup(() => {
 	let storeType = 'GridFS';
 
 	if (settings.get('EmojiUpload_Storage_Type')) {
-		storeType = settings.get('EmojiUpload_Storage_Type');
+		// storeType = settings.get('EmojiUpload_Storage_Type');
 	}
 
 	const RocketChatStore = RocketChatFile[storeType];
@@ -26,7 +26,7 @@ Meteor.startup(() => {
 	let path = '~/uploads';
 	if (settings.get('EmojiUpload_FileSystemPath') != null) {
 		if (settings.get('EmojiUpload_FileSystemPath').trim() !== '') {
-			path = settings.get('EmojiUpload_FileSystemPath');
+			// path = settings.get('EmojiUpload_FileSystemPath');
 		}
 	}
 

@@ -33,6 +33,39 @@ type EmojiPickerProps = {
 	onPickEmoji: (emoji: Emoji & Skin) => void;
 };
 
+const custom = [
+	{
+		id: 'github',
+		name: 'GitHub',
+		emojis: [
+			{
+				id: 'octocat',
+				name: 'Octocat',
+				keywords: ['github'],
+				skins: [{ src: 'https://playground.lexical.dev/assets/cat-typing-CCpT868J.gif' }],
+			},
+			{
+				id: 'party_parrot',
+				name: 'Party Parrot',
+				keywords: ['dance', 'dancing'],
+				skins: [{ src: 'https://playground.lexical.dev/assets/cat-typing-CCpT868J.gif' }],
+			},
+		],
+	},
+	{
+		id: 'gifs',
+		name: 'GIFs',
+		emojis: [
+			{
+				id: 'party_parrot',
+				name: 'Party Parrot',
+				keywords: ['dance', 'dancing'],
+				skins: [{ src: 'https://playground.lexical.dev/assets/cat-typing-CCpT868J.gif' }],
+			},
+		],
+	},
+];
+
 const EmojiPicker = ({ reference, onClose, onPickEmoji }: EmojiPickerProps) => {
 	const t = useTranslation();
 
@@ -105,6 +138,7 @@ const EmojiPicker = ({ reference, onClose, onPickEmoji }: EmojiPickerProps) => {
 	}, [isInputVisible]);
 
 	const handleSelectEmoji = (emoji: Emoji & Skin) => {
+		console.log('the emoji', emoji);
 		if (!emoji) {
 			return;
 		}
@@ -165,65 +199,7 @@ const EmojiPicker = ({ reference, onClose, onPickEmoji }: EmojiPickerProps) => {
 		onClose();
 	};
 
-	return (
-		<EmojiPickerDropdown reference={ref as RefObject<HTMLElement>} ref={emojiContainerRef}>
-			{/* <EmojiPickerContainer role='dialog' aria-label={t('Emoji_picker')} onKeyDown={handleKeyDown}>
-				<EmojiPickerHeader>
-					<TextInput
-						// FIXME: remove autoFocus prop when rewriting the emojiPicker dropdown
-						autoFocus
-						ref={mergedTextInputRef}
-						value={searchTerm}
-						onChange={handleSearch}
-						addon={<Icon name='magnifier' size='x20' />}
-						placeholder={t('Search')}
-						aria-label={t('Search')}
-					/>
-				</EmojiPickerHeader>
-				<EmojiPickerCategoryHeader role='tablist' {...(scrollCategories && { style: { overflowX: 'scroll' } })}>
-					{emojiCategories.map((category, index) => (
-						<EmojiPickerCategoryItem
-							key={category.key}
-							index={index}
-							category={category}
-							active={category.key === currentCategory}
-							handleGoToCategory={handleGoToCategory}
-						/>
-					))}
-				</EmojiPickerCategoryHeader>
-				<Divider mb={12} />
-				<EmojiPickerListArea role='tabpanel'>
-					{searching && <SearchingResult searchResults={searchResults} handleSelectEmoji={handleSelectEmoji} />}
-					{!searching && (
-						<CategoriesResult
-							ref={virtuosoRef}
-							emojiListByCategory={getEmojiListsByCategory()}
-							customItemsLimit={customItemsLimit}
-							handleLoadMore={handleLoadMore}
-							handleSelectEmoji={handleSelectEmoji}
-							handleScroll={handleScroll}
-						/>
-					)}
-				</EmojiPickerListArea>
-				<EmojiPickerPreviewArea>
-					<div>
-						{emojiToPreview && <EmojiPickerPreview emoji={emojiToPreview.emoji} name={emojiToPreview.name} />}
-						{canManageEmoji && emojiToPreview === null && (
-							<Button small onClick={handleGoToAddCustom}>
-								{t('Add_emoji')}
-							</Button>
-						)}
-					</div>
-					<ToneSelectorWrapper caption={t('Skin_tone')}>
-						<ToneSelector tone={actualTone} setTone={setActualTone} />
-					</ToneSelectorWrapper>
-				</EmojiPickerPreviewArea>
-				<EmojiPickerFooter>{t('Powered_by_JoyPixels')}</EmojiPickerFooter>
-			</EmojiPickerContainer> */}
-
-			<Picker data={data} onEmojiSelect={handleSelectEmoji} autoFocus={true} />
-		</EmojiPickerDropdown>
-	);
+	return <Picker data={data} onEmojiSelect={handleSelectEmoji} autoFocus={true} custom={custom} />;
 };
 
 export default EmojiPicker;

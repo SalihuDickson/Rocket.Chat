@@ -29,6 +29,8 @@ async function createDiscussionMessage(
 	msg: IMessage['msg'],
 	messageEmbedded?: MessageAttachmentDefault,
 ): Promise<IMessage> {
+	console.log('creating a message');
+
 	return Message.saveSystemMessage('discussion-created', rid, msg, user, {
 		drid,
 		...(messageEmbedded && { attachments: [messageEmbedded] }),
